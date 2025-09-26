@@ -1,42 +1,43 @@
-# Use a imagem base do Ubuntu
-FROM mydocker/vsomeip:latest
-FROM ubuntu:20.04
-# Definir o maintainer (opcional)
+# Base image Alpine (tiny)
+FROM alpine:3.20
+
 LABEL maintainer="tiagomsrs2012@gmail.com"
 
+# Compilation mode (can be overridden at build/run time)
 ENV COMPILATION_MODE=unittest
 
-# Desativar prompts interativos durante a instalação de pacotes
-ENV DEBIAN_FRONTEND=noninteractive
+# Install build tools and dependencies
+RUN apk add --no-cache \
+    build-base \
+    #g++ \
+    cmake \
+    #make \
+    #ninja \
+    #git \
+    #vim \
+    openssl-dev \
+    curl-dev
+    # common Boost components (add more if needed)
+    #boost-dev \
+    #boost-system \
+    #boost-thread \
+    #boost-filesystem \
+    #boost-program_options \
+    #boost-random
 
-# Atualizar os repositórios de pacotes e instalar pacotes básicos
-RUN apt-get update && apt-get install -y \ 
-    build-essential \      
-    g++ \ 
-    cmake \ 
-    make \ 
-    libboost-all-dev \ 
-    libssl-dev \ 
-    libcurl4-openssl-dev \ 
-    git \ 
-    vim \ 
-    && apt-get clean \ 
-    && rm -rf /var/lib/apt/lists/* 
-
-
-# Definir o diretório de trabalho
+# Working directory
 WORKDIR /IPR
 
-# Copiar o código fonte da aplicação para o contêiner
-COPY libraries/ \ 
-     src/ \ 
-     CMakeLists.txt \ 
-     script_build_random_generator.sh /IPR/
+# Copy source code into container
+COPY CMakeLists.txt README.md script_build_random_generator.sh ./
+COPY libraries/ libraries/
+COPY src/ src/
+COPY unittest/ unittest/
 
-
+# Example: run build script (customize to your workflow)
 # CMD ["/IPR/tools/build_vsomeip.sh"]
-
-# CMD ["/bin/bash", "-c", \
-#     "if [ \"$COMPILATION_MODE\" = \"all\" ]; then /IPR/test/unittest/script_build_unittest_random_generator.sh; \
-#      elif [ \"$COMPILATION_MODE\" = \"unittest\" ]; then /IPR/test/unittest/script_build_unittest_random_generator.sh; fi"]
-
+# Default command runs an interactive shell
+# Example with conditional compilation mode
+# CMD ["/bin/sh", "-c", \
+#   "if [ \"$COMPILATION_MODE\" = \"all\" ]; then /IPR/test/unittest/script_build_unittest_random_generator.sh; \
+#    elif [ \"$COMPILATION_MODE\" = \"unittest\" ]; then /IPR/test/unittest/script_build_unittest_random_generator.sh; fi"]
