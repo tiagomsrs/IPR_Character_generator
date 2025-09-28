@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 3.15)
+
 set(TARGET_LIB rg_utilities)
 set(SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/random_generator.cpp
@@ -13,5 +15,11 @@ target_include_directories(${TARGET_LIB}
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-#install(TARGETS ${TARGET_LIB} LIBRARY DESTINATION $ENV{libdir} COMPONENT lib)
-#install(FILES ${PUBLIC_HEADERS} DESTINATION $ENV{includedir} COMPONENT includes)
+# library installation
+install(TARGETS rg_utilities
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/include/random_generator.hpp DESTINATION include)

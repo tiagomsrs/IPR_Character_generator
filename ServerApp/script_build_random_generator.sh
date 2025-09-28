@@ -23,9 +23,10 @@ cmake ..
 make
 cd $BUILD_ROOT
 
+
 if [ -f "./$BUILD_OUTPUT_PATH/$EXE_NAME" ]; then
     echo "Running application..."
-    ./$BUILD_OUTPUT_PATH/$EXE_NAME
+    exec "./$BUILD_OUTPUT_PATH/$EXE_NAME"
 else
     echo "Failed to compile and generate output binary!"
     exit 1
